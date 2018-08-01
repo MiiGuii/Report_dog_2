@@ -213,7 +213,7 @@ public class Menu extends AppCompatActivity {
 
     private void makeRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, "http://192.168.1.159/Repor.php",
+        StringRequest request = new StringRequest(Request.Method.POST, "http://192.168.1.14/Repor.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

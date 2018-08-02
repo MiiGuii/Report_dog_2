@@ -37,8 +37,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,11 +55,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Menu extends AppCompatActivity {
-    private ListView listView;
-    /*ArrayList a_descc = new ArrayList();
-    ArrayList a_imagen = new ArrayList();
-    ArrayList a_latitud = new ArrayList();
-    ArrayList a_longitud = new ArrayList();*/
+    ListView listView;
+    ArrayList<String> a_descc = new ArrayList();
+    ArrayList<String> a_imagen = new ArrayList();
+    int[] a_imagen2;
+    String[] a_descc2;
+    ArrayList<Double> a_latitud = new ArrayList();
+    ArrayList<Double> a_longitud = new ArrayList();
 
     TextView tx_name,lat,lon;
     EditText texto;
@@ -123,10 +130,6 @@ public class Menu extends AppCompatActivity {
             }
         });
 
-        if(boton.isEnabled()){
-
-        }
-
     }
 
     private void actualizarCoordenadas(SingleShotLocationProvider.GPSCoordinates location) {
@@ -135,6 +138,47 @@ public class Menu extends AppCompatActivity {
         //lat.setText("Latiud: "+latitud);
         //lon.setText("Longitud: "+longitud);
         boton.setEnabled(true);
+        mostarReporte();
+
+    }
+
+    public void mostarReporte(){
+
+        Response.Listener<String>responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    JSONArray array = jsonResponse.getJSONArray("reportes");
+
+                    for (int i = 0; i < array.length();i++) {
+                        JSONObject object = array.getJSONObject(i);
+                        a_descc.add(object.getString("descripcion"));
+                        a_imagen.add(object.getString("dir"));
+                        a_latitud.add(object.getDouble("latitud"));
+                        a_longitud.add(object.getDouble("longitud"));
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                a_descc2 = new String[a_descc.size()];
+                for (int j = 0; j < a_descc.size(); j++){
+                    a_descc2[j] = a_descc.get(j);
+                }
+                Log.w("ssasa", a_descc2.toString());
+                Log.w("ssasa", a_imagen.toString());
+                listView = (ListView)findViewById(R.id.Listview);
+                CustomListAdapter customListAdapter = new CustomListAdapter(Menu.this, a_imagen, a_descc2);
+                listView.setAdapter(customListAdapter);
+                listView.setDividerHeight(0);
+            }
+        };
+
+        GetReporte getReporte = new GetReporte(latitud, longitud, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(Menu.this);
+        queue.add(getReporte);
+
     }
 
     @Override
@@ -213,7 +257,7 @@ public class Menu extends AppCompatActivity {
 
     private void makeRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, "http://192.168.1.14/Repor.php",
+        StringRequest request = new StringRequest(Request.Method.POST, "http://192.168.0.15/Repor.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

@@ -1,6 +1,8 @@
 package com.example.lucian.myapplication;
 
 import android.content.Context;
+import android.media.Image;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,6 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,34 +23,47 @@ import java.util.List;
  * Created by lucian on 26-07-18.
  */
 
-public class CustomListAdapter extends ArrayAdapter<Reporte> {
+public class CustomListAdapter extends ArrayAdapter<String> {
 
-    ArrayList<Reporte> reportes;
-    Context context;
-    int resource;
-    public CustomListAdapter(@NonNull Context context, int resource, @NonNull List<Reporte> objects) {
-        super(context, resource, objects);
-        this.reportes = reportes;
-        this.context = context;
-        this.resource = resource;
+    ArrayList<String> a_imagen;
+    String[] a_descc;
+    Context mContext;
+
+    public CustomListAdapter(Context context, ArrayList<String> imagen, String[] descc) {
+        super(context, R.layout.listview_item);
+        this.a_descc = descc;
+        this.a_imagen = imagen;
+        this.mContext = context;
+    }
+
+    @Override
+    public int getCount() {
+        return a_descc.length;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-        if (convertView == null){
-            LayoutInflater layoutInflater =  (LayoutInflater)getContext().
-                    getSystemService(MainActivity.LAYOUT_INFLATER_SERVICE);
-            convertView = layoutInflater.inflate(R.layout.custom_list_layout, null, true);
+        ViewHolder mViewHolder = new ViewHolder();
+
+        if (convertView == null) {
+            LayoutInflater mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = mInflater.inflate(R.layout.listview_item, parent, false);
+            mViewHolder.dog = (ImageView) convertView.findViewById(R.id.imagenDog);
+            mViewHolder.descr = (TextView) convertView.findViewById(R.id.desccDog);
+            convertView.setTag(mViewHolder);
+        }else{
+            mViewHolder = (ViewHolder) convertView.getTag();
         }
-        Reporte reporte = getItem(position);
+        Picasso.get().load(Uri.parse( a_imagen.get(position))).fit().into(mViewHolder.dog);
+        mViewHolder.descr.setText(a_descc[position]);
 
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
+        return convertView;
+    }
 
-        TextView txtDescc = (TextView) convertView.findViewById(R.id.desccText);
-        txtDescc.setText(reporte.getDescc());
-
-        return super.getView(position, convertView, parent);
+    static class ViewHolder{
+        ImageView dog;
+        TextView descr;
     }
 }

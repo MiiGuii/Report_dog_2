@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -27,10 +26,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,10 +58,8 @@ public class Menu extends AppCompatActivity {
     ListView listView;
     ArrayList<String> a_descc = new ArrayList();
     ArrayList<String> a_imagen = new ArrayList();
-    ArrayList<String> a_fecha = new ArrayList();
-    int[] a_imagen2;
+    //int[] a_imagen2;
     String[] a_descc2;
-    String[] a_fecha2;
     ArrayList<Double> a_latitud = new ArrayList();
     ArrayList<Double> a_longitud = new ArrayList();
 
@@ -72,7 +67,7 @@ public class Menu extends AppCompatActivity {
     EditText texto;
     private String descc;
     Button boton,botonDesc;
-    private String encoded_string, image_name, fecha_queue;
+    private String encoded_string, image_name;
     private Bitmap bitmap;
     private File file;
     AlertDialog dialog;
@@ -159,7 +154,6 @@ public class Menu extends AppCompatActivity {
                     for (int i = 0; i < array.length();i++) {
                         JSONObject object = array.getJSONObject(i);
                         a_descc.add(object.getString("descripcion"));
-                        a_fecha.add(object.getString("fecha"));
                         a_imagen.add(object.getString("dir"));
                         a_latitud.add(object.getDouble("latitud"));
                         a_longitud.add(object.getDouble("longitud"));
@@ -169,25 +163,15 @@ public class Menu extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 a_descc2 = new String[a_descc.size()];
-                a_fecha2 = new String[a_fecha.size()];
                 for (int j = 0; j < a_descc.size(); j++){
                     a_descc2[j] = a_descc.get(j);
-                    a_fecha2[j] = a_fecha.get(j);
                 }
                 Log.w("ssasa", a_descc2.toString());
                 Log.w("ssasa", a_imagen.toString());
                 listView = (ListView)findViewById(R.id.Listview);
-                CustomListAdapter customListAdapter = new CustomListAdapter(Menu.this, a_imagen, a_descc2, a_fecha2);
+                CustomListAdapter customListAdapter = new CustomListAdapter(Menu.this, a_imagen, a_descc2);
                 listView.setAdapter(customListAdapter);
                 listView.setDividerHeight(0);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        final ImageView imageView = (ImageView) view.findViewById(R.id.imagenDog);
-                        final BitmapDrawable bitmapDrawable = (BitmapDrawable) imageView.getDrawable();
-                        final Bitmap yourBitmap = bitmapDrawable.getBitmap();
-                    }
-                });
             }
         };
 
@@ -217,10 +201,8 @@ public class Menu extends AppCompatActivity {
 
     private void getFileUri(){
         Date fecha = new Date();
-        DateFormat fecha2 = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        DateFormat fecha3 = new SimpleDateFormat("dd-MM-yy-HH:mm:ss");
-        fecha_queue = fecha2.format(fecha);
-        image_name = fecha3.format(fecha)+"-" + name + ".jpg";
+        DateFormat fecha2 = new SimpleDateFormat("HH-mm-ss-dd-MM-yyyy");
+        image_name = fecha2.format(fecha) + name + ".jpg";
         file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         + File.separator + image_name
         );
@@ -275,7 +257,7 @@ public class Menu extends AppCompatActivity {
 
     private void makeRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        StringRequest request = new StringRequest(Request.Method.POST, "http://192.168.1.9/Repor.php",
+        StringRequest request = new StringRequest(Request.Method.POST, "http://192.168.1.17/Repor.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -296,7 +278,6 @@ public class Menu extends AppCompatActivity {
                 map.put("longitud",longitud+"");
                 map.put("idUser",idUser+"");
                 map.put("descc",descc);
-                map.put("fecha",fecha_queue);
                 return map;
             }
         };

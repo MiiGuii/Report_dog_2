@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class GetReporte extends StringRequest {
 
-    private static final String GET_REPORTE_URL = "http://192.168.1.9/get.php";
+    private static final String GET_REPORTE_URL = "http://192.168.1.17/get.php";
     private Map<String, String> params;
     public GetReporte(double latitud, double longitud, Response.Listener<String> listener){
         super (Request.Method.POST, GET_REPORTE_URL, listener, null);

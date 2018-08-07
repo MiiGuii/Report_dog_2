@@ -27,12 +27,14 @@ public class CustomListAdapter extends ArrayAdapter<String> {
 
     ArrayList<String> a_imagen;
     String[] a_descc;
+    String[] a_fecha;
     Context mContext;
 
-    public CustomListAdapter(Context context, ArrayList<String> imagen, String[] descc) {
+    public CustomListAdapter(Context context, ArrayList<String> imagen, String[] descc, String[] fecha) {
         super(context, R.layout.listview_item);
         this.a_descc = descc;
         this.a_imagen = imagen;
+        this.a_fecha = fecha;
         this.mContext = context;
     }
 
@@ -52,12 +54,14 @@ public class CustomListAdapter extends ArrayAdapter<String> {
             convertView = mInflater.inflate(R.layout.listview_item, parent, false);
             mViewHolder.dog = (ImageView) convertView.findViewById(R.id.imagenDog);
             mViewHolder.descr = (TextView) convertView.findViewById(R.id.desccDog);
+            mViewHolder.date = (TextView) convertView.findViewById(R.id.textFecha);
             convertView.setTag(mViewHolder);
         }else{
             mViewHolder = (ViewHolder) convertView.getTag();
         }
         Picasso.get().load(Uri.parse( a_imagen.get(position))).fit().into(mViewHolder.dog);
-        mViewHolder.descr.setText(a_descc[position]);
+        mViewHolder.descr.setText("Descripcion: " + a_descc[position]);
+        mViewHolder.date.setText("Fecha: " + a_fecha[position]);
 
         return convertView;
     }
@@ -65,5 +69,6 @@ public class CustomListAdapter extends ArrayAdapter<String> {
     static class ViewHolder{
         ImageView dog;
         TextView descr;
+        TextView date;
     }
 }

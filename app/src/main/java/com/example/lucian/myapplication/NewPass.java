@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class NewPass extends StringRequest {
     private Map<String, String> params;
-    private static final String NEW_PASS_URL = "http://172.20.46.25/NewPass.php";
+    private static final String NEW_PASS_URL = "http://192.168.1.17/NewPass.php";
     public NewPass(String email, String color, String pass, Response.Listener<String> listener) {
         super(Method.POST, NEW_PASS_URL, listener,null);
         params = new HashMap<>();

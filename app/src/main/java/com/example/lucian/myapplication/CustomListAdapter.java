@@ -63,6 +63,7 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         mViewHolder.descr.setText("Descripcion: " + a_descc[position]);
         mViewHolder.date.setText("Fecha: " + a_fecha[position]);
 
+
         return convertView;
     }
 
